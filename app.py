@@ -455,11 +455,23 @@ def update_profile():
         return redirect(url_for('login'))
 
 
-@app.route('/change_password', methods=['POST'])
-def change_password():
-    # Log request for debugging
-    app.logger.info("Change password POST request received.")
-    return redirect('/profile')  # Redirect back to profile for now
+@app.route('/update-profile', methods=['POST'])
+def update_profile():
+    if request.method == 'POST':
+        # process form data
+        name = request.form.get('name')
+        email = request.form.get('email')
+        
+        # update user in database here
+        # (add your logic)
+
+        # then return something
+        flash("Profile updated successfully!", "success")
+        return redirect(url_for('profile'))  # or wherever you want to go
+
+    # if somehow it's not POST, return something anyway
+    return redirect(url_for('profile'))
+
 
 
     
