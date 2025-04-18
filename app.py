@@ -453,20 +453,19 @@ def update_profile():
         flash("Please log in to update your profile.", "danger")
         return redirect(url_for('login'))
 
-    if request.method == 'POST':
-        # Get form data
+    try:
         name = request.form.get('name')
         email = request.form.get('email')
         phone = request.form.get('phone')
         blood_type = request.form.get('blood_type')
-        allergies = request.form.get('allergies', '').split(',')
-        medications = request.form.get('medications', '').split(',')
+        allergies = request.form.get('allergies', '')
+        medications = request.form.get('medications', '')
 
-        # Clean up lists
-        allergies = [item.strip() for item in allergies if item.strip()]
-        medications = [item.strip() for item in medications if item.strip()]
+        # Clean up comma-separated string into list
+        allergies_list = [a.strip() for a in allergies.split(',') if a.strip()]
+        medications_list = [m.strip() for m in medications.split(',') if m.strip()]
 
-        # Update user in users_table (DynamoDB)
+        # Update user info in Users table
         users_table.update_item(
             Key={'email': session['user_email']},
             UpdateExpression="SET #name = :name, phone = :phone",
@@ -477,10 +476,10 @@ def update_profile():
             }
         )
 
-        # Update patient record
+        # Update patient record in PatientRecords table
         patient_records_table.update_item(
             Key={'patient_id': session['user_email']},
-            UpdateExpression=""" 
+            UpdateExpression="""
                 SET #name = :name,
                     phone = :phone,
                     blood_type = :blood_type,
@@ -493,23 +492,21 @@ def update_profile():
                 ':name': name,
                 ':phone': phone,
                 ':blood_type': blood_type,
-                ':allergies': allergies,
-                ':medications': medications,
+                ':allergies': allergies_list,
+                ':medications': medications_list,
                 ':last_updated': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             }
         )
 
-        # Update session
+        # Update session and notify
         session['user_name'] = name
-
-        # Notify user
         flash("Profile updated successfully!", "success")
-
-        # Redirect to profile page after successful update
         return redirect(url_for('patient_profile'))
 
-    # Ensure that a valid response is returned for POST method (although it's redundant in this case)
-    return redirect(url_for('patient_profile'))
+    except Exception as e:
+        app.logger.error(f"Error updating profile: {str(e)}")
+        flash("An error occurred while updating your profile.", "danger")
+        return redirect(url_for('patient_profile'))
 
 
 @app.route('/change-password', methods=['POST'])
