@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Add Doctor - Next Gen Hospital{% endblock %}
+
+{% block content %}
+<section class="add-doctor-hero">
+    <div class="container">
+        <h1>Add New Doctor</h1>
+        <p>Register a healthcare professional to the system</p>
+    </div>
+</section>
+
+<section class="add-doctor-content">
+    <div class="container">
+        <div class="form-container">
+            <form method="POST" action="{{ url_for('add_doctor') }}" class="add-doctor-form">
+                <div class="form-section">
+                    <h2>Personal Information</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" required>
+                            <small>This will be used for login credentials</small>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">Gender</label>
+                            <select id="gender" name="gender">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h2>Professional Information</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="specialty">Specialty</label>
+                            <select id="specialty" name="specialty" required>
+                                <option value="">Select Specialty</option>
+                                <option value="Cardiology">Cardiology</option>
+                                <option value="Dermatology">Dermatology</option>
+                                <option value="Endocrinology">Endocrinology</option>
+                                <option value="Gastroenterology">Gastroenterology</option>
+                                <option value="General Medicine">General Medicine</option>
+                                <option value="Neurology">Neurology</option>
+                                <option value="Obstetrics & Gynecology">Obstetrics & Gynecology</option>
+                                <option value="Ophthalmology">Ophthalmology</option>
+                                <option value="Orthopedics">Orthopedics</option>
+                                <option value="Pediatrics">Pediatrics</option>
+                                <option value="Psychiatry">Psychiatry</option>
+                                <option value="Pulmonology">Pulmonology</option>
+                                <option value="Radiology">Radiology</option>
+                                <option value="Urology">Urology</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="qualification">Qualifications</label>
+                            <input type="text" id="qualification" name="qualification" required>
+                            <small>E.g., MBBS, MD, MS, etc.</small>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="experience">Years of Experience</label>
+                            <input type="number" id="experience" name="experience" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="licenseno">License Number</label>
+                            <input type="text" id="licenseno" name="licenseno">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="bio">Professional Bio</label>
+                        <textarea id="bio" name="bio" rows="4" required></textarea>
+                        <small>Brief description of doctor's experience and expertise</small>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h2>Schedule & Availability</h2>
+                    <div class="form-group">
+                        <label>Working Days</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="workdays" value="monday" checked> Monday</label>
+                            <label><input type="checkbox" name="workdays" value="tuesday" checked> Tuesday</label>
+                            <label><input type="checkbox" name="workdays" value="wednesday" checked> Wednesday</label>
+                            <label><input type="checkbox" name="workdays" value="thursday" checked> Thursday</label>
+                            <label><input type="checkbox" name="workdays" value="friday" checked> Friday</label>
+                            <label><input type="checkbox" name="workdays" value="saturday"> Saturday</label>
+                            <label><input type="checkbox" name="workdays" value="sunday"> Sunday</label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="workHoursStart">Work Hours (Start)</label>
+                            <input type="time" id="workHoursStart" name="work_hours_start" value="09:00">
+                        </div>
+                        <div class="form-group">
+                            <label for="workHoursEnd">Work Hours (End)</label>
+                            <input type="time" id="workHoursEnd" name="work_hours_end" value="17:00">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Add Doctor</button>
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

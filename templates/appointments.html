@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}Appointments - Next Gen Hospital{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Manage Your Appointments</h1>
+        <p>Book new appointments or manage existing ones</p>
+    </div>
+</section>
+
+<section class="appointments-section">
+    <div class="container">
+        <div class="appointment-tabs">
+            <ul class="tab-links">
+                <li class="active" data-tab="my-appointments">My Appointments</li>
+                <li data-tab="book-appointment">Book New Appointment</li>
+            </ul>
+            
+            <div class="tab-content">
+                <div id="my-appointments" class="tab-pane active">
+                    <h3>Your Upcoming Appointments</h3>
+                    
+                    {% if appointments %}
+                        <div class="appointments-list">
+                            {% for appointment in appointments %}
+                                {% if appointment.status == 'scheduled' %}
+                                <div class="appointment-card">
+                                    <div class="appointment-header">
+                                        <h4>Dr. {{ appointment.doctor_name }}</h4>
+                                        <span class="appointment-status status-{{ appointment.status }}">{{ appointment.status }}</span>
+                                    </div>
+                                    <div class="appointment-details">
+                                        <div class="appointment-info">
+                                            <p><i class="fas fa-user-md"></i> <strong>Specialist:</strong> {{ appointment.doctor_specialty }}</p>
+                                            <p><i class="fas fa-calendar-alt"></i> <strong>Date:</strong> {{ appointment.appointment_date }}</p>
+                                            <p><i class="fas fa-clock"></i> <strong>Time:</strong> {{ appointment.appointment_time }}</p>
+                                            <p><i class="fas fa-comment-medical"></i> <strong>Reason:</strong> {{ appointment.reason }}</p>
+                                        </div>
+                                        <div class="appointment-actions">
+                                            <form action="{{ url_for('cancel_appointment', appointment_id=appointment.appointment_id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this appointment?');">
+                                                <button type="submit" class="btn-danger"><i class="fas fa-times-circle"></i> Cancel</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        <h3 class="mt-5">Past & Cancelled Appointments</h3>
+                        <div class="appointments-list past-appointments">
+                            {% for appointment in appointments %}
+                                {% if appointment.status != 'scheduled' %}
+                                <div class="appointment-card">
+                                    <div class="appointment-header">
+                                        <h4>Dr. {{ appointment.doctor_name }}</h4>
+                                        <span class="appointment-status status-{{ appointment.status }}">{{ appointment.status }}</span>
+                                    </div>
+                                    <div class="appointment-details">
+                                        <div class="appointment-info">
+                                            <p><i class="fas fa-user-md"></i> <strong>Specialist:</strong> {{ appointment.doctor_specialty }}</p>
+                                            <p><i class="fas fa-calendar-alt"></i> <strong>Date:</strong> {{ appointment.appointment_date }}</p>
+                                            <p><i class="fas fa-clock"></i> <strong>Time:</strong> {{ appointment.appointment_time }}</p>
+                                            <p><i class="fas fa-comment-medical"></i> <strong>Reason:</strong> {{ appointment.reason }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <img src="{{ url_for('static', filename='img/empty-calendar.svg') }}" alt="No Appointments">
+                            <h4>No Appointments Found</h4>
+                            <p>You don't have any appointments scheduled. Book your first appointment now.</p>
+                            <button class="btn-primary book-now-btn">Book Now</button>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div id="book-appointment" class="tab-pane">
+                    <h3>Book a New Appointment</h3>
+                    
+                    <form action="{{ url_for('book_appointment') }}" method="POST" class="appointment-form">
+                        <div class="form-group">
+                            <label for="doctor_id">Select Doctor</label>
+                            <select id="doctor_id" name="doctor_id" required>
+                                <option value="">-- Select a Doctor --</option>
+                                {% for doctor in doctors %}
+                                <option value="{{ doctor.doctor_id }}" {% if request.args.get('doctor') == doctor.doctor_id %}selected{% endif %}>
+                                    Dr. {{ doctor.name }} - {{ doctor.specialty }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="appointment_date">Appointment Date</label>
+                                <input type="text" id="appointment_date" name="appointment_date" required placeholder="Select a date" class="datepicker">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="appointment_time">Appointment Time</label>
+                                <select id="appointment_time" name="appointment_time" required>
+                                    <option value="">-- Select Time --</option>
+                                    <option value="09:00 AM">09:00 AM</option>
+                                    <option value="09:30 AM">09:30 AM</option>
+                                    <option value="10:00 AM">10:00 AM</option>
+                                    <option value="10:30 AM">10:30 AM</option>
+                                    <option value="11:00 AM">11:00 AM</option>
+                                    <option value="11:30 AM">11:30 AM</option>
+                                    <option value="12:00 PM">12:00 PM</option>
+                                    <option value="12:30 PM">12:30 PM</option>
+                                    <option value="02:00 PM">02:00 PM</option>
+                                    <option value="02:30 PM">02:30 PM</option>
+                                    <option value="03:00 PM">03:00 PM</option>
+                                    <option value="03:30 PM">03:30 PM</option>
+                                    <option value="04:00 PM">04:00 PM</option>
+                                    <option value="04:30 PM">04:30 PM</option>
+                                    <option value="05:00 PM">05:00 PM</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reason">Reason for Visit</label>
+                            <textarea id="reason" name="reason" rows="4" required placeholder="Please describe your symptoms or reason for the appointment"></textarea>
+                        </div>
+                        
+                        <div class="appointment-notes">
+                            <p><i class="fas fa-info-circle"></i> Please arrive 15 minutes before your scheduled appointment time.</p>
+                            <p><i class="fas fa-clock"></i> Appointments can be cancelled up to 24 hours before the scheduled time.</p>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary">Book Appointment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% block extra_scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+<script>
+    // Tab functionality
+    document.querySelectorAll('.tab-links li').forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-links li').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to clicked tab
+            this.classList.add('active');
+            
+            // Hide all tab panes
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
+            
+            // Show the selected tab pane
+            const tabId = this.getAttribute('data-tab');
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+    
+    // Datepicker initialization
+    flatpickr(".datepicker", {
+        minDate: "today",
+        dateFormat: "Y-m-d",
+        disable: [
+            function(date) {
+                // Disable weekends
+                return (date.getDay() === 0 || date.getDay() === 6);
+            }
+        ]
+    });
+    
+    // Book now button functionality
+    const bookNowBtn = document.querySelector('.book-now-btn');
+    if (bookNowBtn) {
+        bookNowBtn.addEventListener('click', function() {
+            document.querySelector('[data-tab="book-appointment"]').click();
+        });
+    }
+    
+    // Pre-select doctor if provided in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const doctorParam = urlParams.get('doctor');
+    if (doctorParam) {
+        document.querySelector('[data-tab="book-appointment"]').click();
+    }
+</script>
+{% endblock %}
+{% endblock %}

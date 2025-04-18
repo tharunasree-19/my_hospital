@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% block title %}Health Tips - Next Gen Hospital{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Health Tips & Resources</h1>
+        <p>Expert advice for your well-being</p>
+    </div>
+</section>
+
+<section class="health-tips-section">
+    <div class="container">
+        <div class="health-category-tabs">
+            <ul class="tab-links">
+                <li class="active" data-tab="all-tips">All Tips</li>
+                <li data-tab="common-ailments">Common Ailments</li>
+                <li data-tab="nutrition">Nutrition</li>
+                <li data-tab="fitness">Fitness</li>
+                <li data-tab="mental-health">Mental Health</li>
+            </ul>
+            
+            <div class="tab-content">
+                <div id="all-tips" class="tab-pane active">
+                    <div class="tips-grid">
+                        {% for tip in tips %}
+                        <div class="tip-card">
+                            <div class="tip-icon">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <h3>{{ tip.title }}</h3>
+                            <p>{{ tip.content }}</p>
+                            <span class="tip-category">{{ tip.category }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div id="common-ailments" class="tab-pane">
+                    <h3>Managing Common Health Issues</h3>
+                    <p class="tab-intro">Learn how to recognize and manage common health conditions, and when to seek professional medical help.</p>
+                    
+                    <div class="accordion">
+                        {% for ailment_name, ailment_info in ailments.items() %}
+                        <div class="accordion-item">
+                            <div class="accordion-header">
+                                <h4>{{ ailment_name|capitalize }}</h4>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="ailment-section">
+                                    <h5><i class="fas fa-clipboard-list"></i> Symptoms</h5>
+                                    <p>{{ ailment_info.symptoms }}</p>
+                                </div>
+                                <div class="ailment-section">
+                                    <h5><i class="fas fa-first-aid"></i> Home Remedy</h5>
+                                    <p>{{ ailment_info.remedy }}</p>
+                                </div>
+                                <div class="ailment-section warning">
+                                    <h5><i class="fas fa-exclamation-triangle"></i> When to See a Doctor</h5>
+                                    <p>{{ ailment_info.when_to_see_doctor }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="disclaimer">
+                        <p><strong>Disclaimer:</strong> This information is not a substitute for professional medical advice. Always consult with a healthcare provider for medical concerns.</p>
+                    </div>
+                </div>
+                
+                <div id="nutrition" class="tab-pane">
+                    <h3>Nutrition & Diet Tips</h3>
+                    <p class="tab-intro">Healthy eating habits and nutritional advice for better health.</p>
+                    
+                    <div class="tips-grid">
+                        {% for tip in tips %}
+                            {% if tip.category == 'Nutrition' %}
+                            <div class="tip-card">
+                                <div class="tip-icon">
+                                    <i class="fas fa-apple-alt"></i>
+                                </div>
+                                <h3>{{ tip.title }}</h3>
+                                <p>{{ tip.content }}</p>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        <!-- Additional Nutrition Tips -->
+                        <div class="tip-card">
+                            <div class="tip-icon">
+                                <i class="fas fa-carrot"></i>
+                            </div>
+                            <h3>Eat the Rainbow</h3>
+                            <p>Include fruits and vegetables of different colors to ensure you're getting a wide range of nutrients.</p>
+                        </div>
+                        <div class="tip-card">
+                            <div class="tip-icon">
+                                <i class="fas fa-tint"></i>
+                            </div>
+                            <h3>Hydration Matters</h3>
+                            <p>Drink water throughout the day, not just when you feel thirsty. Your body needs water for almost every function.</p>
+                        </div>
+                        <div class="tip-card">
+                            <div class="tip-icon">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <h3>Portion Control</h3>
+                            <p>Pay attention to portion sizes to avoid overeating, even with healthy foods.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="fitness" class="tab-pane">
+                    <h3>Fitness & Exercise</h3>
+                    <p class="tab-intro">Incorporate physical activity into your daily routine for better health and well-being.</p>
+                    
+                    <div class="tips-grid">
+                        {% for tip in tips %}
+                            {% if tip.category == 'Fitness' %}
+                            <div class="tip-card">
+                                <div class="tip-icon">
+                                    <i class="fas fa-running"></i>
+                                </div>
+                                <h3>{{ tip.title }}</h3>
+                                <p>{{ tip.content }}</p>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        <!-- Additional Fitness Tips -->
+                        <div class="tip-card">
+                            <div class="tip-icon">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <h3>Cardiovascular Health</h3>
+                            <p>Aim for at least 150 minutes of moderate aerobic activity or 75 minutes of vigorous activity each week.</p>
+                        </div>
+                        <div class="tip-card">
+                            <div class="tip-icon">
+                                <i class="fas fa-dumbbell"></i>
+                            </div>
+                            <h3>Strength Training</h3>
+                            <p>Include strength training exercises at least twice a week to maintain muscle mass and bone density.</p>
+                        </div>
+                        <div class="tip-card">
+                            <div class="tip-icon">
+                                <i class="fas fa-walking"></i>
+                            </div>
+                            <h3>Daily Movement</h3>
+                            <p>Find ways to be active throughout the day, such as taking the stairs, walking during lunch breaks, or stretching regularly.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="mental-health" class="tab-pane">
+                    <h3>Mental Health & Wellness</h3>
+                    <p class="tab-intro">Taking care of your mental health is just as important as physical health.</p>
+                    
+                    <div class="tips-grid">
+                        <!-- Mental Health Tips -->
+                        <div class="tip-card">
+                            <div class="tip-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h3>Stress Management</h3>
+                            <p>Practice stress-reduction techniques such as deep breathing, meditation, or yoga to calm your mind.</p>
+                        </div>
+                        <div class="tip-card">
+                            <div class="tip-icon">
+                                <i class="fas fa-bed"></i>
+                            </div>
+                            <h3>Quality Sleep</h3>
+                            <p>Prioritize good sleep habits by maintaining a regular sleep schedule and creating a relaxing bedtime routine.</p>
+                        </div>
+                        <div class="tip-card">
+                            <div class="tip-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <h3>Social Connections</h3>
+                            <p>Maintain strong social connections with friends and family to support your mental well-being.</p>
+                        </div>
+                        <div class="tip-card">
+                            <div class="tip-icon">
+                                <i class="fas fa-hands-helping"></i>
+                            </div>
+                            <h3>Seek Help</h3>
+                            <p>Don't hesitate to reach out to healthcare professionals if you're struggling with mental health issues.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="health-resources">
+    <div class="container">
+        <h2 class="section-title">Additional Resources</h2>
+        <div class="resources-grid">
+            <div class="resource-card">
+                <div class="resource-icon">
+                    <i class="fas fa-book-medical"></i>
+                </div>
+                <h3>Health Library</h3>
+                <p>Access our comprehensive library of health information and resources.</p>
+                <a href="#" class="btn-tertiary">Explore</a>
+            </div>
+            <div class="resource-card">
+                <div class="resource-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <h3>Health Calculators</h3>
+                <p>BMI, calorie needs, and other useful health calculators.</p>
+                <a href="#" class="btn-tertiary">Use Calculators</a>
+            </div>
+            <div class="resource-card">
+                <div class="resource-icon">
+                    <i class="fas fa-video"></i>
+                </div>
+                <h3>Video Guides</h3>
+                <p>Watch educational videos on various health topics.</p>
+                <a href="#" class="btn-tertiary">Watch Videos</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% block extra_scripts %}
+<script>
+    // Tab functionality
+    document.querySelectorAll('.tab-links li').forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-links li').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to clicked tab
+            this.classList.add('active');
+            
+            // Hide all tab panes
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
+            
+            // Show the selected tab pane
+            const tabId = this.getAttribute('data-tab');
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+    
+    // Accordion functionality
+    document.querySelectorAll('.accordion-header').forEach(header => {
+        header.addEventListener('click', function() {
+            const accordionItem = this.parentElement;
+            accordionItem.classList.toggle('active');
+            
+            // Toggle icon
+            const icon = this.querySelector('i');
+            if (accordionItem.classList.contains('active')) {
+                icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+            } else {
+                icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+            }
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - Next Gen Hospital{% endblock %}
+
+{% block content %}
+<section class="about-hero">
+    <div class="container">
+        <h1>About Next Gen Hospital</h1>
+        <p>Providing cutting-edge healthcare solutions with compassion and expertise</p>
+    </div>
+</section>
+
+<section class="about-content">
+    <div class="container">
+        <div class="about-grid">
+            <div class="about-text">
+                <h2>Our Mission</h2>
+                <p>Next Gen Hospital is committed to delivering exceptional healthcare services with the latest medical technology and highest standards of care. We strive to improve the health and wellbeing of the communities we serve through compassionate care, innovation, and excellence.</p>
+                
+                <h2>Our Vision</h2>
+                <p>To be the leading healthcare provider that transforms healthcare delivery through innovation, personalized patient care, and medical excellence.</p>
+                
+                <h2>Our Values</h2>
+                <ul>
+                    <li><strong>Excellence:</strong> We are committed to the highest standards in healthcare delivery.</li>
+                    <li><strong>Compassion:</strong> We treat every patient with dignity, respect, and empathy.</li>
+                    <li><strong>Innovation:</strong> We continuously seek new ways to improve healthcare outcomes.</li>
+                    <li><strong>Integrity:</strong> We adhere to the highest ethical standards in all our activities.</li>
+                    <li><strong>Teamwork:</strong> We collaborate across disciplines to provide comprehensive care.</li>
+                </ul>
+            </div>
+            <div class="about-image">
+                <img src="{{ url_for('static', filename='images/hospital1.jpg') }}" alt="Next Gen Hospital Building">
+            </div>
+        </div>
+        
+        <div class="history-section">
+            <h2>Our History</h2>
+            <p>Founded in 2010, Next Gen Hospital began as a small clinic with a vision to revolutionize healthcare delivery. Over the years, we have grown into a comprehensive healthcare facility equipped with state-of-the-art technology and staffed by leading healthcare professionals. Our journey has been marked by continuous improvement, expansion of services, and unwavering commitment to patient care.</p>
+        </div>
+        
+        <div class="facilities-section">
+            <h2>Our Facilities</h2>
+            <div class="facilities-grid">
+                <div class="facility-card">
+                    <i class="fas fa-procedures"></i>
+                    <h3>Emergency Care</h3>
+                    <p>24/7 emergency services with rapid response teams</p>
+                </div>
+                <div class="facility-card">
+                    <i class="fas fa-heartbeat"></i>
+                    <h3>Cardiology</h3>
+                    <p>Advanced cardiac care with latest diagnostic equipment</p>
+                </div>
+                <div class="facility-card">
+                    <i class="fas fa-brain"></i>
+                    <h3>Neurology</h3>
+                    <p>Comprehensive neurological diagnostics and treatment</p>
+                </div>
+                <div class="facility-card">
+                    <i class="fas fa-baby"></i>
+                    <h3>Maternity</h3>
+                    <p>Family-centered maternity care in comfortable settings</p>
+                </div>
+                <div class="facility-card">
+                    <i class="fas fa-microscope"></i>
+                    <h3>Laboratory</h3>
+                    <p>State-of-the-art diagnostic laboratory services</p>
+                </div>
+                <div class="facility-card">
+                    <i class="fas fa-x-ray"></i>
+                    <h3>Imaging</h3>
+                    <p>Advanced imaging services including MRI, CT, and ultrasound</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="leadership-section">
+            <h2>Hospital Leadership</h2>
+            <div class="leadership-grid">
+                <div class="leader-card">
+                    <img src="{{ url_for('static', filename='images/ceo1.jpeg') }}" alt="CEO">
+                    <h3>Dr. Sarah Johnson</h3>
+                    <p>Chief Executive Officer</p>
+                </div>
+                <div class="leader-card">
+                    <img src="{{ url_for('static', filename='images/chief2.jpeg') }}" alt="CMO">
+                    <h3>Dr. Robert Smith</h3>
+                    <p>Chief Medical Officer</p>
+                </div>
+                <div class="leader-card">
+                    <img src="{{ url_for('static', filename='images/cn03.jpeg') }}" alt="CNO">
+                    <h3>Dr. Emily Chen</h3>
+                    <p>Chief Nursing Officer</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

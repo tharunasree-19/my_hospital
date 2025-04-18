@@ -1,0 +1,625 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Next Gen Hospital{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+
+{% block content %}
+<section class="admin-hero">
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        <p>Hospital Management System</p>
+    </div>
+</section>
+
+<section class="admin-content">
+    <div class="container">
+        <div class="admin-grid">
+            <div class="admin-sidebar">
+                <div class="admin-user">
+                    <div class="admin-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h3>{{ session.user_name }}</h3>
+                    <p>{{ session.user_type|capitalize }}</p>
+                </div>
+                
+                <div class="admin-navigation">
+                    <a href="#dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <a href="#appointments"><i class="fas fa-calendar-check"></i> Appointments</a>
+                    <a href="#patients"><i class="fas fa-users"></i> Patients</a>
+                    <a href="#doctors"><i class="fas fa-user-md"></i> Doctors</a>
+                    <a href="#messages"><i class="fas fa-envelope"></i> Messages</a>
+                    {% if session.user_type == 'admin' %}
+                        <a href="#settings"><i class="fas fa-cog"></i> Settings</a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="admin-main">
+                <div id="dashboard" class="admin-section">
+                    <h2>Dashboard Overview</h2>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Today's Appointments</h3>
+                                <p class="stat-number">{{ appointments|selectattr('appointment_date', 'equalto', now.strftime('%Y-%m-%d'))|list|length }}</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Total Patients</h3>
+                                <p class="stat-number">{{ patients|length }}</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Active Doctors</h3>
+                                <p class="stat-number">{{ doctors|selectattr('available', 'equalto', true)|list|length }}</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>New Messages</h3>
+                                <p class="stat-number">{{ messages|selectattr('status', 'equalto', 'new')|list|length }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <h3>Quick Actions</h3>
+                        <div class="actions-grid">
+                            <a href="{{ url_for('add_doctor') }}" class="action-card">
+                                <i class="fas fa-user-md"></i>
+                                <span>Add Doctor</span>
+                            </a>
+                            <a href="#appointments" class="action-card">
+                                <i class="fas fa-calendar-plus"></i>
+                                <span>Schedule Appointment</span>
+                            </a>
+                            <a href="#patients" class="action-card">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Add Patient</span>
+                            </a>
+                            <a href="#messages" class="action-card">
+                                <i class="fas fa-envelope-open-text"></i>
+                                <span>View Messages</span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="recent-activity">
+                        <h3>Recent Activity</h3>
+                        <div class="activity-list">
+                            {% for appointment in appointments[:5] %}
+                                <div class="activity-item">
+                                    <div class="activity-icon">
+                                        <i class="fas fa-calendar-check"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <p><strong>{{ appointment.patient_name }}</strong> has an appointment with <strong>Dr. {{ appointment.doctor_name }}</strong></p>
+                                        <p class="activity-meta">{{ appointment.appointment_date }} at {{ appointment.appointment_time }}</p>
+                                    </div>
+                                    <div class="activity-status status-{{ appointment.status }}">
+                                        {{ appointment.status|capitalize }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="appointments" class="admin-section" style="display: none;">
+                    <div class="section-header">
+                        <h2>Manage Appointments</h2>
+                        <button class="btn-primary" id="newAppointmentBtn"><i class="fas fa-plus"></i> New Appointment</button>
+                    </div>
+                    
+                    <div class="filter-controls">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label for="dateFilter">Filter by Date</label>
+                                <input type="date" id="dateFilter" class="date-picker">
+                            </div>
+                            <div class="filter-group">
+                                <label for="statusFilter">Filter by Status</label>
+                                <select id="statusFilter">
+                                    <option value="">All Statuses</option>
+                                    <option value="scheduled">Scheduled</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="cancelled">Cancelled</option>
+                                    <option value="no-show">No Show</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="doctorFilter">Filter by Doctor</label>
+                                <select id="doctorFilter">
+                                    <option value="">All Doctors</option>
+                                    {% for doctor in doctors %}
+                                        <option value="{{ doctor.doctor_id }}">Dr. {{ doctor.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button class="btn-secondary" id="resetFiltersBtn">Reset Filters</button>
+                        </div>
+                    </div>
+                    
+                    <div class="appointments-table-container">
+                        <table class="data-table" id="appointmentsTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Patient</th>
+                                    <th>Doctor</th>
+                                    <th>Department</th>
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appointment in appointments %}
+                                    <tr data-appointment-id="{{ appointment.appointment_id }}" data-appointment-date="{{ appointment.appointment_date }}" data-doctor-id="{{ appointment.doctor_id }}" data-status="{{ appointment.status }}">
+                                        <td>{{ appointment.appointment_date }}</td>
+                                        <td>{{ appointment.appointment_time }}</td>
+                                        <td>{{ appointment.patient_name }}</td>
+                                        <td>Dr. {{ appointment.doctor_name }}</td>
+                                        <td>{{ appointment.doctor_specialty }}</td>
+                                        <td class="truncate">{{ appointment.reason }}</td>
+                                        <td>
+                                            <span class="status-badge status-{{ appointment.status }}">
+                                                {{ appointment.status|capitalize }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button class="btn-view btn-sm view-appointment" title="View Details"><i class="fas fa-eye"></i></button>
+                                                {% if appointment.status == 'scheduled' %}
+                                                    <button class="btn-edit btn-sm edit-appointment" title="Edit"><i class="fas fa-edit"></i></button>
+                                                    <button class="btn-success btn-sm complete-appointment" title="Mark as Completed"><i class="fas fa-check"></i></button>
+                                                    <button class="btn-warning btn-sm noshow-appointment" title="Mark as No Show"><i class="fas fa-user-slash"></i></button>
+                                                    <button class="btn-danger btn-sm cancel-appointment" title="Cancel"><i class="fas fa-times"></i></button>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div id="patients" class="admin-section" style="display: none;">
+                    <div class="section-header">
+                        <h2>Manage Patients</h2>
+                        <button class="btn-primary" id="newPatientBtn"><i class="fas fa-plus"></i> Add Patient</button>
+                    </div>
+                    
+                    <div class="filter-controls">
+                        <div class="search-bar">
+                            <input type="text" id="patientSearch" placeholder="Search patients by name or email...">
+                            <button><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="patients-table-container">
+                        <table class="data-table" id="patientsTable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Blood Type</th>
+                                    <th>Last Visit</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for patient in patients %}
+                                    <tr data-patient-id="{{ patient.patient_id }}">
+                                        <td>{{ patient.name }}</td>
+                                        <td>{{ patient.email }}</td>
+                                        <td>{{ patient.phone }}</td>
+                                        <td>{{ patient.blood_type if patient.blood_type else 'Not specified' }}</td>
+                                        <td>
+                                            {% set last_appointment = appointments|selectattr('patient_email', 'equalto', patient.email)|selectattr('status', 'equalto', 'completed')|sort(attribute='appointment_datetime', reverse=True)|first %}
+                                            {{ last_appointment.appointment_date if last_appointment else 'No visits yet' }}
+                                        </td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button class="btn-view btn-sm view-patient" title="View Details"><i class="fas fa-eye"></i></button>
+                                                <button class="btn-edit btn-sm edit-patient" title="Edit"><i class="fas fa-edit"></i></button>
+                                                <button class="btn-primary btn-sm schedule-appointment" title="Schedule Appointment"><i class="fas fa-calendar-plus"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div id="doctors" class="admin-section" style="display: none;">
+                    <div class="section-header">
+                        <h2>Manage Doctors</h2>
+                        <a href="{{ url_for('add_doctor') }}" class="btn-primary"><i class="fas fa-plus"></i> Add Doctor</a>
+                    </div>
+                    
+                    <div class="doctors-grid">
+                        {% for doctor in doctors %}
+                            <div class="doctor-card">
+                                <div class="doctor-status {{ 'active' if doctor.available else 'inactive' }}"></div>
+                                <div class="doctor-avatar">
+                                    <i class="fas fa-user-md"></i>
+                                </div>
+                                <h3>Dr. {{ doctor.name }}</h3>
+                                <p class="doctor-specialty">{{ doctor.specialty }}</p>
+                                <p class="doctor-info"><i class="fas fa-envelope"></i> {{ doctor.email }}</p>
+                                <p class="doctor-info"><i class="fas fa-phone"></i> {{ doctor.phone }}</p>
+                                <div class="doctor-actions">
+                                    <button class="btn-view view-doctor" data-id="{{ doctor.doctor_id }}"><i class="fas fa-eye"></i> View</button>
+                                    <button class="btn-edit edit-doctor" data-id="{{ doctor.doctor_id }}"><i class="fas fa-edit"></i> Edit</button>
+                                    <button class="btn-toggle-status toggle-doctor-status" data-id="{{ doctor.doctor_id }}" data-status="{{ 'active' if doctor.available else 'inactive' }}">
+                                        {% if doctor.available %}
+                                            <i class="fas fa-toggle-on"></i> Active
+                                        {% else %}
+                                            <i class="fas fa-toggle-off"></i> Inactive
+                                        {% endif %}
+                                    </button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div id="messages" class="admin-section" style="display: none;">
+                    <h2>Contact Messages</h2>
+                    
+                    <div class="filter-controls">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label for="messageStatusFilter">Filter by Status</label>
+                                <select id="messageStatusFilter">
+                                    <option value="">All Messages</option>
+                                    <option value="new">New</option>
+                                    <option value="read">Read</option>
+                                    <option value="replied">Replied</option>
+                                </select>
+                            </div>
+                            <div class="search-bar">
+                                <input type="text" id="messageSearch" placeholder="Search messages...">
+                                <button><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="messages-container">
+                        <div class="messages-list">
+                            {% for message in messages %}
+                                <div class="message-item {{ message.status }}" data-message-id="{{ message.message_id }}">
+                                    <div class="message-header">
+                                        <div class="message-sender">
+                                            <h4>{{ message.name }}</h4>
+                                            <span>{{ message.email }}</span>
+                                        </div>
+                                        <div class="message-meta">
+                                            <span class="message-date">{{ message.submitted_date }}</span>
+                                            <span class="message-status status-{{ message.status }}">{{ message.status|capitalize }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="message-subject">{{ message.subject }}</div>
+                                    <div class="message-preview">{{ message.message[:100] }}{% if message.message|length > 100 %}...{% endif %}</div>
+                                    <div class="message-actions">
+                                        <button class="btn-view btn-sm view-message" title="View Full Message"><i class="fas fa-eye"></i> View</button>
+                                        <button class="btn-primary btn-sm reply-message" title="Reply"><i class="fas fa-reply"></i> Reply</button>
+                                        <button class="btn-success btn-sm mark-resolved" title="Mark as Resolved"><i class="fas fa-check"></i> Mark Resolved</button>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="message-detail" id="messageDetail">
+                            <div class="message-placeholder">
+                                <i class="fas fa-envelope-open-text"></i>
+                                <p>Select a message to view details</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if session.user_type == 'admin' %}
+                <div id="settings" class="admin-section" style="display: none;">
+                    <h2>System Settings</h2>
+                    
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <h3>Hospital Information</h3>
+                            <form id="hospitalInfoForm" class="settings-form">
+                                <div class="form-group">
+                                    <label for="hospitalName">Hospital Name</label>
+                                    <input type="text" id="hospitalName" value="Next Gen Hospital">
+                                </div>
+                                <div class="form-group">
+                                    <label for="hospitalAddress">Address</label>
+                                    <textarea id="hospitalAddress">123 Healthcare Avenue, Medical District, City, State 12345</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="hospitalPhone">Contact Phone</label>
+                                    <input type="tel" id="hospitalPhone" value="(123) 456-7890">
+                                </div>
+                                <div class="form-group">
+                                    <label for="hospitalEmail">Contact Email</label>
+                                    <input type="email" id="hospitalEmail" value="nextgenhospital@gmail.com">
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn-primary">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <div class="settings-card">
+                            <h3>System Users</h3>
+                            <div class="filter-controls">
+                                <div class="search-bar">
+                                    <input type="text" id="userSearch" placeholder="Search users...">
+                                    <button><i class="fas fa-search"></i></button>
+                                </div>
+                                <button class="btn-primary" id="newUserBtn"><i class="fas fa-plus"></i> Add User</button>
+                            </div>
+                            <div class="users-table-container">
+                                <table class="data-table" id="usersTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Registered On</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- This would be populated dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal templates would go here -->
+<div class="modal" id="appointmentModal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2 id="appointmentModalTitle">New Appointment</h2>
+        <form id="appointmentForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="appointmentPatient">Patient</label>
+                    <select id="appointmentPatient" name="patient_email" required>
+                        <option value="">Select Patient</option>
+                        {% for patient in patients %}
+                            <option value="{{ patient.email }}">{{ patient.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="appointmentDoctor">Doctor</label>
+                    <select id="appointmentDoctor" name="doctor_id" required>
+                        <option value="">Select Doctor</option>
+                        {% for doctor in doctors %}
+                            <option value="{{ doctor.doctor_id }}">Dr. {{ doctor.name }} ({{ doctor.specialty }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="appointmentDate">Date</label>
+                    <input type="date" id="appointmentDate" name="appointment_date" required>
+                </div>
+                <div class="form-group">
+                    <label for="appointmentTime">Time</label>
+                    <input type="time" id="appointmentTime" name="appointment_time" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="appointmentReason">Reason</label>
+                <textarea id="appointmentReason" name="reason" rows="3" required></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Save Appointment</button>
+                <button type="button" class="btn-secondary cancel-modal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Navigation tabs
+        const navLinks = document.querySelectorAll('.admin-navigation a');
+        const sections = document.querySelectorAll('.admin-section');
+        
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                navLinks.forEach(l => l.classList.remove('active'));
+                
+                // Add active class to clicked link
+                this.classList.add('active');
+                
+                // Hide all sections
+                sections.forEach(section => section.style.display = 'none');
+                
+                // Show target section
+                const targetId = this.getAttribute('href').substring(1);
+                document.getElementById(targetId).style.display = 'block';
+            });
+        });
+        
+        // Initialize date pickers
+        flatpickr(".date-picker", {
+            dateFormat: "Y-m-d"
+        });
+        
+        // Appointment modal
+        const appointmentModal = document.getElementById('appointmentModal');
+        const newAppointmentBtn = document.getElementById('newAppointmentBtn');
+        const closeModal = document.querySelector('.close-modal');
+        const cancelModal = document.querySelector('.cancel-modal');
+        
+        newAppointmentBtn.addEventListener('click', function() {
+            appointmentModal.style.display = 'block';
+        });
+        
+        closeModal.addEventListener('click', function() {
+            appointmentModal.style.display = 'none';
+        });
+        
+        cancelModal.addEventListener('click', function() {
+            appointmentModal.style.display = 'none';
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target == appointmentModal) {
+                appointmentModal.style.display = 'none';
+            }
+        });
+        
+        // Filter functionality for appointments
+        const dateFilter = document.getElementById('dateFilter');
+        const statusFilter = document.getElementById('statusFilter');
+        const doctorFilter = document.getElementById('doctorFilter');
+        const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+        
+        function filterAppointments() {
+            const date = dateFilter.value;
+            const status = statusFilter.value;
+            const doctorId = doctorFilter.value;
+            
+            const rows = document.querySelectorAll('#appointmentsTable tbody tr');
+            
+            rows.forEach(row => {
+                let shouldShow = true;
+                
+                if (date && row.getAttribute('data-appointment-date') !== date) {
+                    shouldShow = false;
+                }
+                
+                if (status && row.getAttribute('data-status') !== status) {
+                    shouldShow = false;
+                }
+                
+                if (doctorId && row.getAttribute('data-doctor-id') !== doctorId) {
+                    shouldShow = false;
+                }
+                
+                row.style.display = shouldShow ? '' : 'none';
+            });
+        }
+        
+        dateFilter.addEventListener('change', filterAppointments);
+        statusFilter.addEventListener('change', filterAppointments);
+        doctorFilter.addEventListener('change', filterAppointments);
+        
+        resetFiltersBtn.addEventListener('click', function() {
+            dateFilter.value = '';
+            statusFilter.value = '';
+            doctorFilter.value = '';
+            filterAppointments();
+        });
+        
+        // Patient search functionality
+        const patientSearch = document.getElementById('patientSearch');
+        
+        patientSearch.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#patientsTable tbody tr');
+            
+            rows.forEach(row => {
+                const name = row.cells[0].textContent.toLowerCase();
+                const email = row.cells[1].textContent.toLowerCase();
+                
+                if (name.includes(searchTerm) || email.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        
+        // Message view functionality
+        const messageItems = document.querySelectorAll('.message-item');
+        const messageDetail = document.getElementById('messageDetail');
+        
+        messageItems.forEach(item => {
+            const viewBtn = item.querySelector('.view-message');
+            
+            viewBtn.addEventListener('click', function() {
+                const messageId = item.getAttribute('data-message-id');
+                
+                // Here you would typically fetch the full message details
+                // For now, we'll just create a placeholder response
+                const name = item.querySelector('.message-header h4').textContent;
+                const email = item.querySelector('.message-sender span').textContent;
+                const subject = item.querySelector('.message-subject').textContent;
+                const preview = item.querySelector('.message-preview').textContent;
+                const date = item.querySelector('.message-date').textContent;
+                
+                // Update message status to 'read' if it was 'new'
+                if (item.classList.contains('new')) {
+                    item.classList.remove('new');
+                    item.classList.add('read');
+                    item.querySelector('.message-status').textContent = 'Read';
+                    item.querySelector('.message-status').className = 'message-status status-read';
+                }
+                
+                // Create message detail HTML
+                messageDetail.innerHTML = `
+                    <div class="message-detail-header">
+                        <h3>${subject}</h3>
+                        <span class="message-detail-date">${date}</span>
+                    </div>
+                    <div class="message-detail-sender">
+                        <strong>From:</strong> ${name} (${email})
+                    </div>
+                    <div class="message-detail-content">
+                        <p>${preview}</p>
+                        <p>This is a placeholder for the full message content. In a real implementation, you would fetch the complete message from the server.</p>
+                    </div>
+                    <div class="message-detail-actions">
+                        <button class="btn-primary reply-message" data-email="${email}"><i class="fas fa-reply"></i> Reply</button>
+                        <button class="btn-success mark-resolved" data-id="${messageId}"><i class="fas fa-check"></i> Mark Resolved</button>
+                    </div>
+                `;
+            });
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

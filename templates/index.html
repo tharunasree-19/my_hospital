@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Next Gen Hospital - Advanced Healthcare{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Welcome to Next Gen Hospital</h1>
+            <p>Providing advanced healthcare with compassion and technology</p>
+            <div class="hero-buttons">
+                <a href="{{ url_for('appointments') }}" class="btn-primary"><i class="fas fa-calendar-check"></i> Book Appointment</a>
+                <a href="{{ url_for('doctors_list') }}" class="btn-secondary"><i class="fas fa-user-md"></i> Find Doctors</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="services">
+    <div class="container">
+        <h2 class="section-title">Our Services</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-stethoscope"></i>
+                </div>
+                <h3>General Checkup</h3>
+                <p>Comprehensive health assessment by expert physicians</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <h3>Cardiology</h3>
+                <p>Advanced heart care with state-of-the-art technology</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>Neurology</h3>
+                <p>Expert diagnosis and treatment of neurological disorders</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-tooth"></i>
+                </div>
+                <h3>Dental Care</h3>
+                <p>Complete dental services for all age groups</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-bone"></i>
+                </div>
+                <h3>Orthopedics</h3>
+                <p>Specialized care for bone and joint related issues</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h3>Ophthalmology</h3>
+                <p>Complete eye care and vision correction services</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="featured-doctors">
+    <div class="container">
+        <h2 class="section-title">Our Expert Doctors</h2>
+        <div class="doctor-slider">
+            <a href="{{ url_for('doctors_list') }}" class="btn-tertiary">View All Doctors</a>
+        </div>
+    </div>
+</section>
+
+<section class="health-tips">
+    <div class="container">
+        <h2 class="section-title">Health Tips</h2>
+        <div class="tips-grid">
+            {% for tip in tips %}
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h3>{{ tip.title }}</h3>
+                <p>{{ tip.content }}</p>
+                <span class="tip-category">{{ tip.category }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="view-all">
+            <a href="{{ url_for('health_tips_page') }}" class="btn-tertiary">View All Health Tips</a>
+        </div>
+    </div>
+</section>
+
+<section class="testimonials">
+    <div class="container">
+        <h2 class="section-title">What Our Patients Say</h2>
+        <div class="testimonial-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-img">
+                    <img src="{{ url_for('static', filename='images/testimonial1.jpg') }}" alt="Patient">
+                </div>
+                <p class="testimonial-text">"The doctors at Next Gen Hospital are exceptional. Their care and expertise helped me recover quickly."</p>
+                <h4>John Smith</h4>
+                <p class="testimonial-role">Cardiac Patient</p>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-img">
+                    <img src="{{ url_for('static', filename='images/testimonial2.webp') }}" alt="Patient">
+                </div>
+                <p class="testimonial-text">"I was amazed by the technology and care I received. The staff was friendly and professional."</p>
+                <h4>Sarah Johnson</h4>
+                <p class="testimonial-role">Neurology Patient</p>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-img">
+                    <img src="{{ url_for('static', filename='images/testimonial3.webp') }}" alt="Patient">
+                </div>
+                <p class="testimonial-text">"The online appointment system made it so easy to schedule my visits. Highly recommended!"</p>
+                <h4>Michael Brown</h4>
+                <p class="testimonial-role">Regular Checkup Patient</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Need Medical Assistance?</h2>
+            <p>Book an appointment with our specialist doctors today</p>
+            <a href="{{ url_for('appointments') }}" class="btn-primary">Book Appointment</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile - Next Gen Hospital{% endblock %}
+
+{% block content %}
+<section class="profile-hero">
+    <div class="container">
+        <h1>My Profile</h1>
+        <p>Manage your personal and medical information</p>
+    </div>
+</section>
+
+<section class="profile-content">
+    <div class="container">
+        <div class="profile-grid">
+            <div class="profile-sidebar">
+                <div class="profile-card">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <h2>{{ user.name }}</h2>
+                    <p><i class="fas fa-envelope"></i> {{ user.email }}</p>
+                    <p><i class="fas fa-phone"></i> {{ user.phone }}</p>
+                    <p><i class="fas fa-calendar-alt"></i> Member since: {{ user.registration_date.split(' ')[0] }}</p>
+                </div>
+                
+                <div class="profile-navigation">
+                    <a href="#personal-info" class="active"><i class="fas fa-user"></i> Personal Information</a>
+                    <a href="#medical-info"><i class="fas fa-notes-medical"></i> Medical Information</a>
+                    <a href="#appointment-history"><i class="fas fa-calendar-check"></i> Appointment History</a>
+                    <a href="#password-change"><i class="fas fa-lock"></i> Change Password</a>
+                </div>
+            </div>
+            
+            <div class="profile-main">
+                <div id="personal-info" class="profile-section">
+                    <div class="section-header">
+                        <h2>Personal Information</h2>
+                        <button class="btn-edit" id="editPersonalBtn"><i class="fas fa-edit"></i> Edit</button>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('update_profile') }}" id="personal-form" class="profile-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Full Name</label>
+                                <input type="text" id="name" name="name" value="{{ user.name }}" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" value="{{ user.email }}" disabled readonly>
+                                <small>Email cannot be changed</small>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" value="{{ user.phone }}" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <select id="gender" name="gender" disabled>
+                                    <option value="male" {% if patient.gender == 'male' %}selected{% endif %}>Male</option>
+                                    <option value="female" {% if patient.gender == 'female' %}selected{% endif %}>Female</option>
+                                    <option value="other" {% if patient.gender == 'other' %}selected{% endif %}>Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-actions" style="display: none;">
+                            <button type="submit" class="btn-primary">Save Changes</button>
+                            <button type="button" class="btn-secondary" id="cancelPersonalBtn">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div id="medical-info" class="profile-section">
+                    <div class="section-header">
+                        <h2>Medical Information</h2>
+                        <button class="btn-edit" id="editMedicalBtn"><i class="fas fa-edit"></i> Edit</button>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('update_profile') }}" id="medical-form" class="profile-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="blood_type">Blood Type</label>
+                                <select id="blood_type" name="blood_type" disabled>
+                                    <option value="" {% if not patient.blood_type %}selected{% endif %}>Select Blood Type</option>
+                                    <option value="A+" {% if patient.blood_type == 'A+' %}selected{% endif %}>A+</option>
+                                    <option value="A-" {% if patient.blood_type == 'A-' %}selected{% endif %}>A-</option>
+                                    <option value="B+" {% if patient.blood_type == 'B+' %}selected{% endif %}>B+</option>
+                                    <option value="B-" {% if patient.blood_type == 'B-' %}selected{% endif %}>B-</option>
+                                    <option value="AB+" {% if patient.blood_type == 'AB+' %}selected{% endif %}>AB+</option>
+                                    <option value="AB-" {% if patient.blood_type == 'AB-' %}selected{% endif %}>AB-</option>
+                                    <option value="O+" {% if patient.blood_type == 'O+' %}selected{% endif %}>O+</option>
+                                    <option value="O-" {% if patient.blood_type == 'O-' %}selected{% endif %}>O-</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="height">Height (cm)</label>
+                                <input type="number" id="height" name="height" value="{{ patient.height|default('') }}" disabled>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="weight">Weight (kg)</label>
+                                <input type="number" id="weight" name="weight" value="{{ patient.weight|default('') }}" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="allergies">Allergies</label>
+                                <textarea id="allergies" name="allergies" disabled>{{ patient.allergies|join(', ') if patient.allergies else '' }}</textarea>
+                                <small>Separate multiple allergies with commas</small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="medications">Current Medications</label>
+                            <textarea id="medications" name="medications" disabled>{{ patient.medications|join(', ') if patient.medications else '' }}</textarea>
+                            <small>Separate multiple medications with commas</small>
+                        </div>
+                        <div class="form-actions" style="display: none;">
+                            <button type="submit" class="btn-primary">Save Changes</button>
+                            <button type="button" class="btn-secondary" id="cancelMedicalBtn">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div id="appointment-history" class="profile-section">
+                    <div class="section-header">
+                        <h2>Appointment History</h2>
+                    </div>
+                    
+                    <div class="appointments-list">
+                        {% if appointments %}
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Doctor</th>
+                                        <th>Department</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for appointment in appointments %}
+                                        <tr>
+                                            <td>{{ appointment.appointment_date }}</td>
+                                            <td>{{ appointment.appointment_time }}</td>
+                                            <td>Dr. {{ appointment.doctor_name }}</td>
+                                            <td>{{ appointment.doctor_specialty }}</td>
+                                            <td>
+                                                <span class="status-badge status-{{ appointment.status }}">
+                                                    {{ appointment.status|capitalize }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {% if appointment.status == 'scheduled' %}
+                                                    <form method="POST" action="{{ url_for('cancel_appointment', appointment_id=appointment.appointment_id) }}" onsubmit="return confirm('Are you sure you want to cancel this appointment?');">
+                                                        <button type="submit" class="btn-danger btn-sm">Cancel</button>
+                                                    </form>
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <div class="no-data">
+                                <i class="fas fa-calendar-times"></i>
+                                <p>You don't have any appointments yet.</p>
+                                <a href="{{ url_for('appointments') }}" class="btn-primary">Book an Appointment</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div id="password-change" class="profile-section">
+                    <div class="section-header">
+                        <h2>Change Password</h2>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('change_password') }}" class="profile-form">
+                        <div class="form-group">
+                            <label for="current_password">Current Password</label>
+                            <input type="password" id="current_password" name="current_password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="new_password">New Password</label>
+                            <input type="password" id="new_password" name="new_password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm_password">Confirm New Password</label>
+                            <input type="password" id="confirm_password" name="confirm_password" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Update Password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Navigation tabs
+        const navLinks = document.querySelectorAll('.profile-navigation a');
+        const sections = document.querySelectorAll('.profile-section');
+        
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                navLinks.forEach(l => l.classList.remove('active'));
+                
+                // Add active class to clicked link
+                this.classList.add('active');
+                
+                // Hide all sections
+                sections.forEach(section => section.style.display = 'none');
+                
+                // Show target section
+                const targetId = this.getAttribute('href').substring(1);
+                document.getElementById(targetId).style.display = 'block';
+            });
+        });
+        
+        // Show first section by default
+        sections.forEach((section, index) => {
+            if (index === 0) {
+                section.style.display = 'block';
+            } else {
+                section.style.display = 'none';
+            }
+        });
+        
+        // Personal information edit
+        const editPersonalBtn = document.getElementById('editPersonalBtn');
+        const cancelPersonalBtn = document.getElementById('cancelPersonalBtn');
+        const personalForm = document.getElementById('personal-form');
+        
+        editPersonalBtn.addEventListener('click', function() {
+            toggleFormEdit(personalForm, true);
+            editPersonalBtn.style.display = 'none';
+            personalForm.querySelector('.form-actions').style.display = 'flex';
+        });
+        
+        cancelPersonalBtn.addEventListener('click', function() {
+            toggleFormEdit(personalForm, false);
+            editPersonalBtn.style.display = 'inline-block';
+            personalForm.querySelector('.form-actions').style.display = 'none';
+        });
+        
+        // Medical information edit
+        const editMedicalBtn = document.getElementById('editMedicalBtn');
+        const cancelMedicalBtn = document.getElementById('cancelMedicalBtn');
+        const medicalForm = document.getElementById('medical-form');
+        
+        editMedicalBtn.addEventListener('click', function() {
+            toggleFormEdit(medicalForm, true);
+            editMedicalBtn.style.display = 'none';
+            medicalForm.querySelector('.form-actions').style.display = 'flex';
+        });
+        
+        cancelMedicalBtn.addEventListener('click', function() {
+            toggleFormEdit(medicalForm, false);
+            editMedicalBtn.style.display = 'inline-block';
+            medicalForm.querySelector('.form-actions').style.display = 'none';
+        });
+        
+        // Helper function to toggle form edit state
+        function toggleFormEdit(form, editable) {
+            const inputs = form.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.id !== 'email') {
+                    input.disabled = !editable;
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

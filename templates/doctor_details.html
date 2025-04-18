@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Dr. {{ doctor.name }} - Next Gen Hospital{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Dr. {{ doctor.name }}</h1>
+        <p>{{ doctor.specialty }} Specialist</p>
+    </div>
+</section>
+
+<section class="doctor-profile">
+    <div class="container">
+        <div class="doctor-profile-container">
+            <div class="doctor-profile-sidebar">
+                <div class="doctor-profile-image">
+                    <img src="{{ url_for('static', filename='img/doctors/doctor-placeholder.jpg') }}" alt="Dr. {{ doctor.name }}">
+                </div>
+                <div class="doctor-profile-info">
+                    <h3>Contact Information</h3>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> {{ doctor.email }}</li>
+                        <li><i class="fas fa-phone"></i> {{ doctor.phone }}</li>
+                    </ul>
+                    <div class="doctor-book-appointment">
+                        <a href="{{ url_for('appointments') }}?doctor={{ doctor.doctor_id }}" class="btn-primary btn-block"><i class="fas fa-calendar-check"></i> Book Appointment</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="doctor-profile-content">
+                <div class="doctor-profile-header">
+                    <h2>Dr. {{ doctor.name }}</h2>
+                    <p class="doctor-specialty">{{ doctor.specialty }} Specialist</p>
+                    <div class="doctor-tags">
+                        <span class="doctor-qualification">{{ doctor.qualification }}</span>
+                        <span class="doctor-experience">{{ doctor.experience }} Years Experience</span>
+                    </div>
+                </div>
+                
+                <div class="doctor-profile-tabs">
+                    <ul class="tab-links">
+                        <li class="active" data-tab="about">About</li>
+                        <li data-tab="education">Education & Experience</li>
+                        <li data-tab="services">Services</li>
+                        <li data-tab="reviews">Reviews</li>
+                    </ul>
+                    
+                    <div class="tab-content">
+                        <div id="about" class="tab-pane active">
+                            <h3>About Dr. {{ doctor.name }}</h3>
+                            <p>{{ doctor.bio }}</p>
+                        </div>
+                        
+                        <div id="education" class="tab-pane">
+                            <h3>Education</h3>
+                            <ul class="timeline">
+                                <li>
+                                    <div class="timeline-badge"><i class="fas fa-graduation-cap"></i></div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4>{{ doctor.qualification }}</h4>
+                                            <p>Prestigious Medical University</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="timeline-inverted">
+                                    <div class="timeline-badge"><i class="fas fa-certificate"></i></div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4>Specialization in {{ doctor.specialty }}</h4>
+                                            <p>Advanced Medical Institute</p>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                            
+                            <h3>Experience</h3>
+                            <ul class="timeline">
+                                <li>
+                                    <div class="timeline-badge"><i class="fas fa-hospital"></i></div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4>Senior {{ doctor.specialty }} Specialist</h4>
+                                            <p>Next Gen Hospital (Present)</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="timeline-inverted">
+                                    <div class="timeline-badge"><i class="fas fa-clinic-medical"></i></div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4>{{ doctor.specialty }} Consultant</h4>
+                                            <p>Regional Medical Center (Past)</p>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div id="services" class="tab-pane">
+                            <h3>Services Offered</h3>
+                            <ul class="services-list">
+                                <li><i class="fas fa-check-circle"></i> General Consultation</li>
+                                <li><i class="fas fa-check-circle"></i> Specialized {{ doctor.specialty }} Care</li>
+                                <li><i class="fas fa-check-circle"></i> Diagnostic Procedures</li>
+                                <li><i class="fas fa-check-circle"></i> Treatment Planning</li>
+                                <li><i class="fas fa-check-circle"></i> Follow-up Consultations</li>
+                                <li><i class="fas fa-check-circle"></i> Emergency Care</li>
+                            </ul>
+                        </div>
+                        
+                        <div id="reviews" class="tab-pane">
+                            <h3>Patient Reviews</h3>
+                            <div class="reviews-container">
+                                <div class="review">
+                                    <div class="review-header">
+                                        <div class="reviewer">John D.</div>
+                                        <div class="rating">★★★★★</div>
+                                        <div class="review-date">2 months ago</div>
+                                    </div>
+                                    <div class="review-content">
+                                        <p>Dr. {{ doctor.name }} was very thorough and attentive. Explained everything clearly and made me feel comfortable.</p>
+                                    </div>
+                                </div>
+                                <div class="review">
+                                    <div class="review-header">
+                                        <div class="review">
+                                            <div class="review-header">
+                                                <div class="reviewer">Mary S.</div>
+                                                <div class="rating">★★★★☆</div>
+                                                <div class="review-date">3 months ago</div>
+                                            </div>
+                                            <div class="review-content">
+                                                <p>Great doctor with excellent bedside manner. Very knowledgeable in the field. Would recommend to friends and family.</p>
+                                            </div>
+                                        </div>
+                                        <div class="review">
+                                            <div class="review-header">
+                                                <div class="reviewer">Robert T.</div>
+                                                <div class="rating">★★★★★</div>
+                                                <div class="review-date">5 months ago</div>
+                                            </div>
+                                            <div class="review-content">
+                                                <p>Dr. {{ doctor.name }} is the best in the field. The treatment was effective, and the follow-up care was exceptional.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="similar-doctors">
+            <div class="container">
+                <h2 class="section-title">Other Specialists</h2>
+                <div class="similar-doctors-slider">
+                    <!-- Dynamic content would be loaded here based on specialty -->
+                    <p class="text-center">Check out our other specialists in various departments</p>
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('doctors_list') }}" class="btn-tertiary">View All Doctors</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        {% block extra_scripts %}
+        <script>
+            // Tab functionality
+            document.querySelectorAll('.tab-links li').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.tab-links li').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Hide all tab panes
+                    document.querySelectorAll('.tab-pane').forEach(pane => {
+                        pane.classList.remove('active');
+                    });
+                    
+                    // Show the selected tab pane
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        </script>
+        {% endblock %}
+        {% endblock %}

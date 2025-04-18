@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Next Gen Hospital{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-form-container">
+                <h2>Create Your Account</h2>
+                <p>Join Next Gen Hospital for better healthcare management</p>
+                
+                <form action="{{ url_for('register') }}" method="POST" class="auth-form">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required placeholder="Enter your email address">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="Enter your phone number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required placeholder="Create a strong password">
+                        <small>Password must be at least 8 characters long</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm Password</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required placeholder="Re-enter your password">
+                    </div>
+                    
+                    <div class="form-group terms">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary btn-block">Create Account</button>
+                </form>
+                
+                <div class="auth-links">
+                    <p>Already have an account? <a href="{{ url_for('login') }}">Sign In</a></p>
+                </div>
+            </div>
+            
+            <div class="auth-info">
+                <h3>Benefits of Registration</h3>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Easy appointment booking with our doctors</li>
+                    <li><i class="fas fa-check-circle"></i> Access to your medical records</li>
+                    <li><i class="fas fa-check-circle"></i> Personalized health recommendations</li>
+                    <li><i class="fas fa-check-circle"></i> Email notifications for appointments</li>
+                    <li><i class="fas fa-check-circle"></i> View and manage your upcoming appointments</li>
+                </ul>
+                <div class="auth-image">
+                    <img src="{{ url_for('static', filename='images/register.jpg') }}" alt="Registration">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
