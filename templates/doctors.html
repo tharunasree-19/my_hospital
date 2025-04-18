@@ -36,7 +36,7 @@
             {% for doctor in doctors %}
             <div class="doctor-card" data-specialty="{{ doctor.specialty }}">
                 <div class="doctor-avatar">
-                    <img src="{{ url_for('static', filename='images/doctors/sarah.jpg) }}" alt="Dr. {{ doctor.name }}">
+                    <img src="{{ url_for('static', filename='img/doctors/doctor-placeholder.jpg') }}" alt="Dr. {{ doctor.name }}">
                 </div>
                 <div class="doctor-info">
                     <h3>Dr. {{ doctor.name }}</h3>
