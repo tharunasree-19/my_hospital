@@ -458,65 +458,61 @@ def update_profile():
 @app.route('/update-profile', methods=['POST'])
 def update_profile():
     if request.method == 'POST':
-        # process form data
+        # Get form data
         name = request.form.get('name')
         email = request.form.get('email')
-        
-        # update user in database here
-        # (add your logic)
+        phone = request.form.get('phone')
+        blood_type = request.form.get('blood_type')
+        allergies = request.form.get('allergies', '').split(',')
+        medications = request.form.get('medications', '').split(',')
 
-        # then return something
+        # Clean up lists
+        allergies = [item.strip() for item in allergies if item.strip()]
+        medications = [item.strip() for item in medications if item.strip()]
+
+        # Update user in users_table (DynamoDB)
+        users_table.update_item(
+            Key={'email': session['user_email']},
+            UpdateExpression="SET #name = :name, phone = :phone",
+            ExpressionAttributeNames={'#name': 'name'},
+            ExpressionAttributeValues={
+                ':name': name,
+                ':phone': phone
+            }
+        )
+
+        # Update patient record
+        patient_records_table.update_item(
+            Key={'patient_id': session['user_email']},
+            UpdateExpression="""
+                SET #name = :name,
+                    phone = :phone,
+                    blood_type = :blood_type,
+                    allergies = :allergies,
+                    medications = :medications,
+                    last_updated = :last_updated
+            """,
+            ExpressionAttributeNames={'#name': 'name'},
+            ExpressionAttributeValues={
+                ':name': name,
+                ':phone': phone,
+                ':blood_type': blood_type,
+                ':allergies': allergies,
+                ':medications': medications,
+                ':last_updated': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }
+        )
+
+        # Update session
+        session['user_name'] = name
+
+        # Notify user
         flash("Profile updated successfully!", "success")
-        return redirect(url_for('profile'))  # or wherever you want to go
 
-    # if somehow it's not POST, return something anyway
-    return redirect(url_for('profile'))
+        return redirect(url_for('patient_profile'))
 
-
-
-    
-    # Get form data
-    name = request.form['name']
-    phone = request.form['phone']
-    blood_type = request.form['blood_type']
-    allergies = request.form.get('allergies', '').split(',')
-    medications = request.form.get('medications', '').split(',')
-    
-    # Clean up lists (remove empty items and strip whitespace)
-    allergies = [item.strip() for item in allergies if item.strip()]
-    medications = [item.strip() for item in medications if item.strip()]
-    
-    # Update user information
-    users_table.update_item(
-        Key={'email': session['user_email']},
-        UpdateExpression="SET #name = :name, phone = :phone",
-        ExpressionAttributeNames={'#name': 'name'},
-        ExpressionAttributeValues={
-            ':name': name,
-            ':phone': phone
-        }
-    )
-    
-    # Update patient record
-    patient_records_table.update_item(
-        Key={'patient_id': session['user_email']},
-        UpdateExpression="SET #name = :name, phone = :phone, blood_type = :blood_type, allergies = :allergies, medications = :medications, last_updated = :last_updated",
-        ExpressionAttributeNames={'#name': 'name'},
-        ExpressionAttributeValues={
-            ':name': name,
-            ':phone': phone,
-            ':blood_type': blood_type,
-            ':allergies': allergies,
-            ':medications': medications,
-            ':last_updated': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        }
-    )
-    
-    # Update session
-    session['user_name'] = name
-    
-    flash("Profile updated successfully!", "success")
     return redirect(url_for('patient_profile'))
+
 
 
 # Admin Dashboard (for hospital staff)
