@@ -511,6 +511,13 @@ def update_profile():
 
     return redirect(url_for('patient_profile'))
 
+@app.route('/change-password', methods=['POST'])
+def change_password():
+    # Handle password change logic here
+    # Example: Retrieve current password, new password, and update the database
+    return redirect(url_for('profile'))  # or wherever you want to redirect after password change
+
+
 
 
 # Admin Dashboard (for hospital staff)
