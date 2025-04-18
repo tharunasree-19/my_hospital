@@ -479,8 +479,14 @@ def update_profile():
         # Update patient record in PatientRecords table
         patient_records_table.update_item(
             Key={'patient_id': session['user_email']},
-            UpdateExpression="""SET #name = :name, phone = :phone, blood_type = :blood_type,
-                                 allergies = :allergies, medications = :medications, last_updated = :last_updated""",
+            UpdateExpression="""
+                SET #name = :name,
+                    phone = :phone,
+                    blood_type = :blood_type,
+                    allergies = :allergies,
+                    medications = :medications,
+                    last_updated = :last_updated
+            """,
             ExpressionAttributeNames={'#name': 'name'},
             ExpressionAttributeValues={
                 ':name': name,
@@ -505,10 +511,9 @@ def update_profile():
 
 @app.route('/change-password', methods=['POST'])
 def change_password():
-    # Password change logic can be implemented later
+    # Dummy placeholder logic — update this later
     flash("Password change feature is coming soon!", "info")
     return redirect(url_for('patient_profile'))
-
 
 
 
