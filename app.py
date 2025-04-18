@@ -447,8 +447,6 @@ def patient_profile():
                           appointments=appointments,
                           is_logged_in=is_logged_in())
 
-
-# Update Patient Profile
 @app.route('/update-profile', methods=['POST'])
 def update_profile():
     if not is_logged_in():
@@ -507,9 +505,12 @@ def update_profile():
         # Notify user
         flash("Profile updated successfully!", "success")
 
+        # Redirect to profile page after successful update
         return redirect(url_for('patient_profile'))
 
+    # Ensure that a valid response is returned for POST method (although it's redundant in this case)
     return redirect(url_for('patient_profile'))
+
 
 @app.route('/change-password', methods=['POST'])
 def change_password():
