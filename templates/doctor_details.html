@@ -126,22 +126,26 @@
                                 </div>
                                 <div class="review">
                                     <div class="review-header">
-                                        <div class="reviewer">Mary S.</div>
-                                        <div class="rating">★★★★☆</div>
-                                        <div class="review-date">3 months ago</div>
-                                    </div>
-                                    <div class="review-content">
-                                        <p>Great doctor with excellent bedside manner. Very knowledgeable in the field. Would recommend to friends and family.</p>
-                                    </div>
-                                </div>
-                                <div class="review">
-                                    <div class="review-header">
-                                        <div class="reviewer">Robert T.</div>
-                                        <div class="rating">★★★★★</div>
-                                        <div class="review-date">5 months ago</div>
-                                    </div>
-                                    <div class="review-content">
-                                        <p>Dr. {{ doctor.name }} is the best in the field. The treatment was effective, and the follow-up care was exceptional.</p>
+                                        <div class="review">
+                                            <div class="review-header">
+                                                <div class="reviewer">Mary S.</div>
+                                                <div class="rating">★★★★☆</div>
+                                                <div class="review-date">3 months ago</div>
+                                            </div>
+                                            <div class="review-content">
+                                                <p>Great doctor with excellent bedside manner. Very knowledgeable in the field. Would recommend to friends and family.</p>
+                                            </div>
+                                        </div>
+                                        <div class="review">
+                                            <div class="review-header">
+                                                <div class="reviewer">Robert T.</div>
+                                                <div class="rating">★★★★★</div>
+                                                <div class="review-date">5 months ago</div>
+                                            </div>
+                                            <div class="review-content">
+                                                <p>Dr. {{ doctor.name }} is the best in the field. The treatment was effective, and the follow-up care was exceptional.</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -155,6 +159,7 @@
             <div class="container">
                 <h2 class="section-title">Other Specialists</h2>
                 <div class="similar-doctors-slider">
+                    <!-- Dynamic content would be loaded here based on specialty -->
                     <p class="text-center">Check out our other specialists in various departments</p>
                     <div class="text-center mt-4">
                         <a href="{{ url_for('doctors_list') }}" class="btn-tertiary">View All Doctors</a>
@@ -168,19 +173,24 @@
             // Tab functionality
             document.querySelectorAll('.tab-links li').forEach(tab => {
                 tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
                     document.querySelectorAll('.tab-links li').forEach(item => {
                         item.classList.remove('active');
                     });
+                    
+                    // Add active class to clicked tab
                     this.classList.add('active');
                     
+                    // Hide all tab panes
                     document.querySelectorAll('.tab-pane').forEach(pane => {
                         pane.classList.remove('active');
                     });
                     
+                    // Show the selected tab pane
                     const tabId = this.getAttribute('data-tab');
                     document.getElementById(tabId).classList.add('active');
                 });
             });
         </script>
         {% endblock %}
-{% endblock %}
+        {% endblock %}
