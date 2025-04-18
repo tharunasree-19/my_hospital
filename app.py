@@ -511,9 +511,10 @@ def update_profile():
 
 @app.route('/change-password', methods=['POST'])
 def change_password():
-    # Handle password change logic here
-    # Example: Retrieve current password, new password, and update the database
-    return redirect(url_for('profile'))  # or wherever you want to redirect after password change
+    # Dummy placeholder logic — update this later
+    flash("Password change feature is coming soon!", "info")
+    return redirect(url_for('patient_profile'))
+
 
 
 
