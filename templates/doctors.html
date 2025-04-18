@@ -45,7 +45,7 @@
                     <p class="doctor-experience"><i class="fas fa-clock"></i> {{ doctor.experience }} years experience</p>
                 </div>
                 <div class="doctor-actions">
-                    <a href="{{ url_for('doctor_details', doctor_id=doctor['doctor_id']) }}" class="btn-view-profile">View Profile</a>
+                   <a href="{{ url_for('doctor_details', doctor_id=doctor['doctor_id']) }}" class="btn-view-profile">View Profile</a>
                     <a href="{{ url_for('appointments') }}?doctor={{ doctor.doctor_id }}" class="btn-book-appointment">Book Appointment</a>
                 </div>
             </div>
