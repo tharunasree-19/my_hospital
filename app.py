@@ -447,6 +447,7 @@ def patient_profile():
                           appointments=appointments,
                           is_logged_in=is_logged_in())
 
+
 # Update Patient Profile
 @app.route('/update-profile', methods=['POST'])
 def update_profile():
@@ -454,9 +455,6 @@ def update_profile():
         flash("Please log in to update your profile.", "danger")
         return redirect(url_for('login'))
 
-
-@app.route('/update-profile', methods=['POST'])
-def update_profile():
     if request.method == 'POST':
         # Get form data
         name = request.form.get('name')
@@ -484,7 +482,7 @@ def update_profile():
         # Update patient record
         patient_records_table.update_item(
             Key={'patient_id': session['user_email']},
-            UpdateExpression="""
+            UpdateExpression=""" 
                 SET #name = :name,
                     phone = :phone,
                     blood_type = :blood_type,
